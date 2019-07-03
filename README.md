@@ -84,7 +84,7 @@ native 使用方式
 
     //快速插入
     //param ：指定插入name = lihua 的数据
-    res,err := db.QuickUpdate(User{Name:"lihua"})
+    res,err := db.QuickInsert(User{Name:"lihua"})
 
     //快速修改
     //param ：修改 id = 1 的数据 name = lihua
