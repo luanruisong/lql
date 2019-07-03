@@ -37,8 +37,14 @@ go get github.com/luanruisong/lql
 
     }
 
+
+    //设置日志打印主要是sql等，可以加入自己的logger
+    db.SetDebuger(func (msg ...interface{}){
+        fmt.Println(msg...)
+    })
+
     //close db connection
-    db1.Close()
+    db.Close()
 
 ```
 
