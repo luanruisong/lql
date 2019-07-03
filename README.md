@@ -20,7 +20,7 @@ go get github.com/luanruisong/lql
 
     //init db
 
-    dbconfig := factory.Config{
+    dbconfig := lql.Config{
         Host:"127.0.0.1:3306",
         Database:"databaseName",
         UserName:"root",
@@ -29,7 +29,7 @@ go get github.com/luanruisong/lql
         MaxIdleConn:3
     }
 
-    db := factory.NewDataSource(dbconfig)
+    db := lql.NewDataSource(dbconfig)
 
 
     if !db.isConn {
