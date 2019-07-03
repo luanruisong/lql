@@ -96,7 +96,7 @@ native 使用方式
 
 其他介绍
 
-半orm时，表名回使用结构体名称进行蛇形命名转换
+半orm时，表名使用结构体名称进行蛇形命名转换
 如：UserInfo => user_info
 
 lql 的tag 使用分以下几种
