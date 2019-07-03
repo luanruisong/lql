@@ -83,7 +83,7 @@ native 使用方式
     //param 2 ：查询列为 name,age 参数为nil时 返回所有字段
     //param 3 ：每页20条数据
     //param 4 ：查询第一页
-    row := db.QuickPageFind(User{Name:"lihua"},[]string{"name","age",20,1})
+    row := db.QuickPageFind(User{Name:"lihua"},[]string{"name","age"},20,1)
 
     //快速插入
     //param ：指定插入name = lihua 的数据
