@@ -24,8 +24,8 @@ go get github.com/luanruisong/lql
         Database:"databaseName",
         UserName:"root",
         Password:"123456",
-        MaxConn:10
-        MaxIdleConn:3
+        MaxConn:10,
+        MaxIdleConn:3,
     }
 
     db := lql.NewDataSource(dbconfig)
