@@ -95,7 +95,7 @@ tag 介绍
 lql 的tag 使用分以下几种
 
 tag_name | description
-- | :-: |
+- | :-:
 sql   | 指定在转换sql的时候的字段名
 order | 标明在快速查询的时候 是需要排序的字段，多个order可以并存 优先级根据order内容来确定
 sort  | 排序方式 和 order的时候可以指明 desc 不然排序使用默认的asc排序
