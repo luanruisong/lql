@@ -67,9 +67,9 @@ native 使用方式
 
 
     type User struct {
-        Id   int  `sql:"id" pk:"1"`
+        Id   int    `sql:"id" pk:"1"`
         Name string `sql:"name"`
-        Age  int `sql:"age" order:"1" sort:"desc"`
+        Age  int    `sql:"age" order:"1" sort:"desc"`
     }
 
     //快速查询
