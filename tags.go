@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 	"sort"
 	"strings"
-	"unicode"
 )
 
 const (
