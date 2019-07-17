@@ -1,9 +1,12 @@
-package lql
+package main
 
 import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"reflect"
+	"strings"
+	"unicode"
 )
 
 type Config struct {
@@ -19,7 +22,7 @@ type DBPool struct {
 	currDB *sql.DB
 	isConn bool
 	err    error
-	d  func(...interface{})
+	d      func(...interface{})
 }
 
 func defDebuger(i ...interface{}) {
@@ -50,7 +53,7 @@ func initDb(config Config) *DBPool {
 		return &DBPool{
 			currDB: db,
 			isConn: true,
-			d: defDebuger,
+			d:      defDebuger,
 		}
 	}
 }
@@ -74,4 +77,50 @@ func parseRow(r *sql.Rows) map[string]string {
 		}
 	}
 	return item
+}
+
+func getStructValueAndType(p interface{}) (reflect.Value, reflect.Type) {
+	v := reflect.ValueOf(p)
+	if v.Kind() == reflect.Ptr {
+		v = reflect.Indirect(v)
+	}
+	return v, v.Type()
+}
+
+func convStructField(p interface{}) string {
+	switch p.(type) {
+	case int:
+		s := p.(int)
+		if s != 0 {
+			return fmt.Sprintf("%d", p)
+		}
+	case int64:
+		s := p.(int64)
+		if s != 0 {
+			return fmt.Sprintf("%d", p)
+		}
+	case float64:
+		s := p.(float64)
+		if s != 0 {
+			return fmt.Sprintf("%f", p)
+		}
+	case string:
+		return p.(string)
+	}
+	return ""
+}
+
+func snakeString(s string) string {
+	data := make([]rune, 0)
+	rs := []rune(s)
+	for i, v := range rs {
+		if unicode.IsUpper(v) {
+			v = unicode.ToLower(v)
+			if i > 0 {
+				data = append(data, '_')
+			}
+		}
+		data = append(data, v)
+	}
+	return strings.ToLower(string(data))
 }

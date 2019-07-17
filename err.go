@@ -1,4 +1,4 @@
-package lql
+package main
 
 import (
 	"regexp"

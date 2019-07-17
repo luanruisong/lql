@@ -1,15 +1,15 @@
-package lql
+package main
 
 import (
 	"database/sql"
 )
 
-func (m *DBPool) SetDebuger(debuger func (...interface{})){
+func (m *DBPool) SetDebuger(debuger func(...interface{})) {
 	m.d = debuger
 	m.debug("dbpool set debuger success")
 }
 
-func (m *DBPool) debug(p ...interface{}){
+func (m *DBPool) debug(p ...interface{}) {
 	m.d(p...)
 }
 func (m *DBPool) Query(query string, args ...interface{}) []map[string]string {
