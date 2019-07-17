@@ -1,4 +1,4 @@
-package main
+package lql
 
 import (
 	"errors"
