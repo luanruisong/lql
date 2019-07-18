@@ -111,10 +111,10 @@ lql 的tag 使用分以下几种
 
 tag_name | description
 :- | :-
-sql   | 指定在转换sql的时候的字段名 不填写按蛇形命名转换|
-order | 标明在快速查询的时候 是需要排序的字段，多个order可以并存 优先级根据order内容来确定 |
-sort  | 排序方式 和 order的时候可以指明 desc 不然排序使用默认的asc排序 |
-pk    | 快速修改时，声明pk是表示当前字段为表的主键，多个pk只采用第一个，慎重填写 |
-dtype | 数据库对应类型，指定方式 => `dtype:"varchar(20)"` 不指定时有默认值
-cdesc | 数据库字段约束，指定方式 => `cdesc:"NOT NULL"` 多个约束时 空格排列即可
+sql   | 字段名，指定方式 => `sql:"user_id"` 不填写按蛇形命名转换|
+order | 排序字段，指定方式 => `order:"1"`， `order:"2"` 优先级根据tag排序 |
+sort  | 排序方式，指定方式 => `sort:"desc"` 单独指定无效 |
+pk    | 主键声明，指定方式 => `pk:"1"` 多个pk只采用第一个，慎重填写 |
+dtype | 数据库对应类型，指定方式 => `dtype:"varchar(20)"` 不指定时有默认值 |
+cdesc | 数据库字段约束，指定方式 => `cdesc:"NOT NULL"` 多个约束时 空格排列即可 |
 
