@@ -44,12 +44,14 @@ func (db *DBPool) QuickUpdate(p interface{}) (sql.Result, error) {
 
 func  (db *DBPool) QuickCheckTableStruct(p interface{}) {
 	mt := structConvMysqlTag(p)
+	db.debug("start check table",mt.tname)
 	row,err := db.QueryRow(mt.sqlCheckTbExists())
 	if err != nil {
 		db.debug("check table error",err.Error())
 		return
 	}
 	if len(row) > 0 {
+		db.debug("table",mt.tname,"exists start check column")
 		currColumn := db.Query(mt.sqlCheckColumn())
 		if currColumn == nil {
 			db.debug("create table error cannot find column")
@@ -61,6 +63,7 @@ func  (db *DBPool) QuickCheckTableStruct(p interface{}) {
 		}
 		for _,v := range mt.getField() {
 			if !inStringArrays(v.name,currColumnList){
+				db.debug("table",mt.tname,"column",v.name,"not exists add column")
 				_,err = db.Exec(mt.sqlAddColumn(v))
 				if err != nil {
 					db.debug("alter table add column error",err.Error())
@@ -69,6 +72,7 @@ func  (db *DBPool) QuickCheckTableStruct(p interface{}) {
 			}
 		}
 	} else {
+		db.debug("table",mt.tname,"not exists create table")
 		_,err = db.Exec(mt.sqlCreateTable())
 		if err != nil {
 			db.debug("create table error",err.Error())
