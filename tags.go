@@ -86,7 +86,7 @@ func (c *mysqlFileTag) getSql() string{
 	if len(dataType) == 0 {
 		dataType = getColumnDateTypeAndLength(c.value)
 	}
-	return c.name + "" + dataType + ""  + c.tags[TAG_NAME_COLUMN_DESC]
+	return c.name + " " + dataType + " "  + c.tags[TAG_NAME_COLUMN_DESC]
 }
 
 func (mt *mysqlTag) getField() []*mysqlFileTag {
