@@ -16,5 +16,5 @@ var (
 	sql_create_table = "CREATE TABLE %s(%s);"
 	sql_check_column = "show columns from %s"
 	sql_add_column = "ALTER TABLE %s ADD %s"
-
+	sql_pk = "PRIMARY KEY (`%s`)"
 )
