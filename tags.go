@@ -226,6 +226,8 @@ func (mt *mysqlTag) sqlCreateTable() string {
 	for i,v := range mt.fields {
 		allColumnSql[i] = v.getSql()
 	}
-	allColumnSql = append(allColumnSql,fmt.Sprintf(sql_pk,mt.pk))
+	if  len(mt.pk) > 0 {
+		allColumnSql = append(allColumnSql,fmt.Sprintf(sql_pk,mt.pk))
+	}
 	return fmt.Sprintf(sql_create_table, mt.tname,strings.Join(allColumnSql,","))
 }

@@ -92,6 +92,14 @@ native 使用方式
     //param ：修改 id = 1 的数据 name = lihua
     res,err := db.QuickUpdate(User{Name:"lihua",Id:1})
 
+
+    //新加入  数据结构检测
+    //如果表不存在，创建表
+    //如果表存在，检测字段做增量更新（不包含字段约束，类型等修改）
+    db.QuickCheckTableStruct(User{})
+
+
+
 ```
 
 其他介绍
@@ -107,5 +115,6 @@ sql   | 指定在转换sql的时候的字段名 不填写按蛇形命名转换|
 order | 标明在快速查询的时候 是需要排序的字段，多个order可以并存 优先级根据order内容来确定 |
 sort  | 排序方式 和 order的时候可以指明 desc 不然排序使用默认的asc排序 |
 pk    | 快速修改时，声明pk是表示当前字段为表的主键，多个pk只采用第一个，慎重填写 |
-
+dtype | 数据库对应类型，指定方式 => `dtype:"varchar(20)"` 不指定时有默认值
+cdesc | 数据库字段约束，指定方式 => `cdesc:"NOT NULL"` 多个约束时 空格排列即可
 
