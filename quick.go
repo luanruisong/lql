@@ -40,3 +40,39 @@ func (db *DBPool) QuickUpdate(p interface{}) (sql.Result, error) {
 	return db.Exec(sql, param...)
 
 }
+
+
+func  (db *DBPool) QuickCheckTableStruct(p interface{}) {
+	mt := structConvMysqlTag(p)
+	row,err := db.QueryRow(mt.sqlCheckTbExists())
+	if err != nil {
+		db.debug("check table error",err.Error())
+		return
+	}
+	if len(row) > 0 {
+		currColumn := db.Query(mt.sqlCheckColumn())
+		if currColumn == nil {
+			db.debug("create table error cannot find column")
+			return
+		}
+		currColumnList := make([]string,len(currColumn))
+		for i,v := range currColumn {
+			currColumnList[i] = v["Field"]
+		}
+		for _,v := range mt.getField() {
+			if !inStringArrays(v.name,currColumnList){
+				_,err = db.Exec(mt.sqlAddColumn(v))
+				if err != nil {
+					db.debug("alter table add column error",err.Error())
+					return
+				}
+			}
+		}
+	} else {
+		_,err = db.Exec(mt.sqlCreateTable())
+		if err != nil {
+			db.debug("create table error",err.Error())
+			return
+		}
+	}
+}

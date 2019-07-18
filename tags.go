@@ -7,17 +7,32 @@ import (
 )
 
 const (
+	//base tags
 	TAG_NAME_COLUMN = "sql"
 	TAG_NAME_PK     = "pk"
+
+	//function tags
 	TAG_NAME_ORDER  = "order"
 	TAG_NAME_SORT   = "sort"
+	TAG_NAME_DATATYPE   = "dtype"
+	TAG_NAME_COLUMN_DESC   = "cdesc"
+
+)
+
+var (
+	funcTags = []string{
+		TAG_NAME_ORDER,
+		TAG_NAME_SORT,
+		TAG_NAME_DATATYPE,
+		TAG_NAME_COLUMN_DESC,
+	}
 )
 
 type (
 	mysqlTag struct {
 		tname  string
 		pk     string
-		fields []mysqlFileTag
+		fields []*mysqlFileTag
 	}
 	mysqlFileTag struct {
 		name  string
@@ -26,8 +41,60 @@ type (
 	}
 )
 
-func (mt *mysqlTag) getNotEmptyField() []mysqlFileTag {
-	res := make([]mysqlFileTag, 0)
+func structConvMysqlTag(p interface{}) *mysqlTag {
+	v, t := getStructValueAndType(p)
+	var data = make(map[string]interface{})
+
+	mt := mysqlTag{
+		tname:  snakeString(t.Name()),
+		pk:     "",
+		fields: make([]*mysqlFileTag, 0),
+	}
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		name := f.Tag.Get(TAG_NAME_COLUMN)
+		if len(name) == 0 {
+			name = snakeString(f.Name)
+		}
+
+		if len(mt.pk) == 0 {
+			if len(f.Tag.Get(TAG_NAME_PK)) > 0 {
+				mt.pk = name
+			}
+		}
+		value := v.Field(i).Interface()
+		tags := make(map[string]string)
+		for _, v := range funcTags {
+			if t := f.Tag.Get(v); len(t) > 0 {
+				tags[v] = t
+			}
+		}
+		mft := mysqlFileTag{
+			name:  name,
+			value: value,
+			tags:  tags,
+		}
+		mt.fields = append(mt.fields, &mft)
+		data[name] = value
+	}
+	return &mt
+}
+
+func (c *mysqlFileTag) getSql() string{
+
+	dataType := c.tags[TAG_NAME_DATATYPE]
+	if len(dataType) == 0 {
+		dataType = getColumnDateTypeAndLength(c.value)
+	}
+	return c.name + dataType + c.tags[TAG_NAME_COLUMN_DESC]
+}
+
+func (mt *mysqlTag) getField() []*mysqlFileTag {
+	return mt.fields
+}
+
+func (mt *mysqlTag) getNotEmptyField() []*mysqlFileTag {
+	res := make([]*mysqlFileTag, 0)
 	for _, v := range mt.fields {
 		if len(convStructField(v.value)) > 0 {
 			res = append(res, v)
@@ -36,8 +103,8 @@ func (mt *mysqlTag) getNotEmptyField() []mysqlFileTag {
 	return res
 }
 
-func (mt *mysqlTag) getOrderField() []mysqlFileTag {
-	res := make(map[string]mysqlFileTag, 0)
+func (mt *mysqlTag) getOrderField() []*mysqlFileTag {
+	res := make(map[string]*mysqlFileTag, 0)
 	for _, v := range mt.fields {
 		if oi := v.tags[TAG_NAME_ORDER]; len(oi) > 0 {
 			res[oi] = v
@@ -51,7 +118,7 @@ func (mt *mysqlTag) getOrderField() []mysqlFileTag {
 		i++
 	}
 	sort.Strings(keyList)
-	finalRes := make([]mysqlFileTag, l)
+	finalRes := make([]*mysqlFileTag, l)
 	for i, v := range keyList {
 		finalRes[i] = res[v]
 	}
@@ -119,7 +186,7 @@ func (mt *mysqlTag) sqlSelect(column []string, pageSize, pageNo int) (string, []
 
 func (mt *mysqlTag) sqlUpdate() (string, []interface{}) {
 	fs := mt.getNotEmptyField()
-	var pk mysqlFileTag
+	var pk *mysqlFileTag
 	for i, v := range fs {
 		if v.name == mt.pk {
 			pk = v
@@ -142,38 +209,22 @@ func (mt *mysqlTag) sqlUpdate() (string, []interface{}) {
 	return "", nil
 }
 
-func structConvMysqlTag(p interface{}) *mysqlTag {
-	v, t := getStructValueAndType(p)
-	var data = make(map[string]interface{})
+func (mt *mysqlTag) sqlCheckTbExists() string {
+	return fmt.Sprintf(sql_check_tb, mt.tname)
+}
 
-	mt := mysqlTag{
-		tname:  snakeString(t.Name()),
-		pk:     "",
-		fields: make([]mysqlFileTag, 0),
-	}
-	for i := 0; i < t.NumField(); i++ {
-		f := t.Field(i)
-		name := f.Tag.Get(TAG_NAME_COLUMN)
-		if len(name) == 0 {
-			name = snakeString(f.Name)
-		}
+func (mt *mysqlTag) sqlCheckColumn() string {
+	return fmt.Sprintf(sql_check_column, mt.tname)
+}
 
-		if len(mt.pk) == 0 {
-			if len(f.Tag.Get(TAG_NAME_PK)) > 0 {
-				mt.pk = name
-			}
-		}
-		value := v.Field(i).Interface()
-		mft := mysqlFileTag{
-			name:  name,
-			value: value,
-			tags: map[string]string{
-				TAG_NAME_ORDER: f.Tag.Get(TAG_NAME_ORDER),
-				TAG_NAME_SORT:  f.Tag.Get(TAG_NAME_SORT),
-			},
-		}
-		mt.fields = append(mt.fields, mft)
-		data[name] = value
+func (mt *mysqlTag) sqlAddColumn(c *mysqlFileTag) string {
+	return fmt.Sprintf(sql_add_column, mt.tname,c.getSql())
+}
+
+func (mt *mysqlTag) sqlCreateTable() string {
+	allColumnSql := make([]string,len(mt.fields))
+	for i,v := range mt.fields {
+		allColumnSql[i] = v.getSql()
 	}
-	return &mt
+	return fmt.Sprintf(sql_create_table, mt.tname,strings.Join(allColumnSql,","))
 }

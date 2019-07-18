@@ -124,3 +124,26 @@ func snakeString(s string) string {
 	}
 	return strings.ToLower(string(data))
 }
+
+func getColumnDateTypeAndLength(p interface{}) string {
+	switch p.(type) {
+	case int,int32:
+		return "int(11)"
+	case int64:
+		return "bigint(11)"
+	case float32:
+		return "float(11)"
+	case float64:
+		return "double(11)"
+	}
+	return "varchar(20)"
+}
+
+func inStringArrays(s string,ss []string)bool {
+	for _,v := range ss {
+		if s == v {
+			return true
+		}
+	}
+	return false
+}
