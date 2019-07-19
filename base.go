@@ -19,10 +19,10 @@ type Config struct {
 }
 
 type DBPool struct {
-	currDB *sql.DB
-	isConn bool
-	err    error
-	d      func(...interface{})
+	currDB   *sql.DB
+	isConn   bool
+	err      error
+	d        func(...interface{})
 	sqlDebug bool
 }
 
@@ -128,7 +128,7 @@ func snakeString(s string) string {
 
 func getColumnDateTypeAndLength(p interface{}) string {
 	switch p.(type) {
-	case int,int32:
+	case int, int32:
 		return "int(11)"
 	case int64:
 		return "bigint(11)"
@@ -140,8 +140,8 @@ func getColumnDateTypeAndLength(p interface{}) string {
 	return "varchar(20)"
 }
 
-func inStringArrays(s string,ss []string)bool {
-	for _,v := range ss {
+func inStringArrays(s string, ss []string) bool {
+	for _, v := range ss {
 		if s == v {
 			return true
 		}

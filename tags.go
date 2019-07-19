@@ -12,11 +12,10 @@ const (
 	TAG_NAME_PK     = "pk"
 
 	//function tags
-	TAG_NAME_ORDER  = "order"
-	TAG_NAME_SORT   = "sort"
-	TAG_NAME_DATATYPE   = "dtype"
-	TAG_NAME_COLUMN_DESC   = "cdesc"
-
+	TAG_NAME_ORDER       = "order"
+	TAG_NAME_SORT        = "sort"
+	TAG_NAME_DATATYPE    = "dtype"
+	TAG_NAME_COLUMN_DESC = "cdesc"
 )
 
 var (
@@ -80,13 +79,13 @@ func structConvMysqlTag(p interface{}) *mysqlTag {
 	return &mt
 }
 
-func (c *mysqlFileTag) getSql() string{
+func (c *mysqlFileTag) getSql() string {
 
 	dataType := c.tags[TAG_NAME_DATATYPE]
 	if len(dataType) == 0 {
 		dataType = getColumnDateTypeAndLength(c.value)
 	}
-	return c.name + " " + dataType + " "  + c.tags[TAG_NAME_COLUMN_DESC]
+	return c.name + " " + dataType + " " + c.tags[TAG_NAME_COLUMN_DESC]
 }
 
 func (mt *mysqlTag) getField() []*mysqlFileTag {
@@ -111,11 +110,9 @@ func (mt *mysqlTag) getOrderField() []*mysqlFileTag {
 		}
 	}
 	l := len(res)
-	keyList := make([]string, l)
-	i := 0
-	for k, _ := range res {
-		keyList[i] = k
-		i++
+	keyList := make([]string, 0)
+	for k := range res {
+		keyList = append(keyList, k)
 	}
 	sort.Strings(keyList)
 	finalRes := make([]*mysqlFileTag, l)
@@ -218,16 +215,16 @@ func (mt *mysqlTag) sqlCheckColumn() string {
 }
 
 func (mt *mysqlTag) sqlAddColumn(c *mysqlFileTag) string {
-	return fmt.Sprintf(sql_add_column, mt.tname,c.getSql())
+	return fmt.Sprintf(sql_add_column, mt.tname, c.getSql())
 }
 
 func (mt *mysqlTag) sqlCreateTable() string {
-	allColumnSql := make([]string,len(mt.fields))
-	for i,v := range mt.fields {
+	allColumnSql := make([]string, len(mt.fields))
+	for i, v := range mt.fields {
 		allColumnSql[i] = v.getSql()
 	}
-	if  len(mt.pk) > 0 {
-		allColumnSql = append(allColumnSql,fmt.Sprintf(sql_pk,mt.pk))
+	if len(mt.pk) > 0 {
+		allColumnSql = append(allColumnSql, fmt.Sprintf(sql_pk, mt.pk))
 	}
-	return fmt.Sprintf(sql_create_table, mt.tname,strings.Join(allColumnSql,","))
+	return fmt.Sprintf(sql_create_table, mt.tname, strings.Join(allColumnSql, ","))
 }
