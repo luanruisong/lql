@@ -5,6 +5,7 @@ lql就是给各位酷爱偷懒的小伙伴带来一个半自动sql拼装工具�
 欢迎大家一起交流~  
 
 
+安装
 ```sh
 go get github.com/luanruisong/lql
 ```
