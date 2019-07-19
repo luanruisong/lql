@@ -41,6 +41,8 @@ go get github.com/luanruisong/lql
     db.SetDebuger(func (msg ...interface{}){
         fmt.Println(msg...)
     })
+    //开启sql打印
+    db.OpenSqlDebugger()
 
     //close db connection
     db.Close()

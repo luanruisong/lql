@@ -23,6 +23,7 @@ type DBPool struct {
 	isConn bool
 	err    error
 	d      func(...interface{})
+	sqlDebug bool
 }
 
 func defDebuger(i ...interface{}) {

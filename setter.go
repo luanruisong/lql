@@ -12,8 +12,15 @@ func (m *DBPool) SetDebuger(debuger func(...interface{})) {
 func (m *DBPool) debug(p ...interface{}) {
 	m.d(p...)
 }
+
+func (m *DBPool) debugSql(p ...interface{}) {
+	if m.sqlDebug {
+		m.debug(p...)
+	}
+}
+
 func (m *DBPool) Query(query string, args ...interface{}) []map[string]string {
-	m.debug("Query sql :(", query, ")", args)
+	m.debugSql("Query sql :(", query, ")", args)
 	rows, err := m.currDB.Query(query, args...)
 	if err != nil {
 		return nil
@@ -27,7 +34,7 @@ func (m *DBPool) Query(query string, args ...interface{}) []map[string]string {
 }
 
 func (m *DBPool) QueryRows(query string, args ...interface{}) ([]map[string]string, error) {
-	m.debug("Query sql :(", query, ")", args)
+	m.debugSql("Query sql :(", query, ")", args)
 	rows, err := m.currDB.Query(query, args...)
 	if err != nil {
 		return nil, err
@@ -41,7 +48,7 @@ func (m *DBPool) QueryRows(query string, args ...interface{}) ([]map[string]stri
 }
 
 func (m *DBPool) QueryRow(query string, args ...interface{}) (map[string]string, error) {
-	m.debug("Query Row sql :(", query, ")", args)
+	m.debugSql("Query Row sql :(", query, ")", args)
 	rows, err := m.currDB.Query(query, args...)
 	if err != nil {
 		return nil, err
@@ -54,7 +61,7 @@ func (m *DBPool) QueryRow(query string, args ...interface{}) (map[string]string,
 }
 
 func (m *DBPool) Exec(sql string, args ...interface{}) (sql.Result, error) {
-	m.debug("Exec sql :(", sql, ")", args)
+	m.debugSql("Exec sql :(", sql, ")", args)
 	res, err := m.currDB.Exec(sql, args...)
 	if err != nil {
 	}
@@ -86,4 +93,7 @@ func (m *DBPool) Err() error {
 }
 func (m *DBPool) Begin() (*sql.Tx, error) {
 	return m.currDB.Begin()
+}
+func (m *DBPool) OpenSqlDebugger() {
+	m.sqlDebug = true
 }
