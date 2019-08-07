@@ -77,15 +77,20 @@ native 使用方式
 
     //快速查询
     //param 1 ：根据name = lihua 查询，
-    //param 2 ：查询列为 name,age 参数为nil时 返回所有字段
-    row := db.QuickFind(User{Name:"lihua"},[]string{"name","age"})
+
+    //返回所有字段
+    row := db.QuickFind(User{Name:"lihua"})
+    //查询列为 name,age
+    row := db.QuickFind(User{Name:"lihua"},"name","age")
 
     //分页查询
     //param 1 ：根据name = lihua 查询，
-    //param 2 ：查询列为 name,age 参数为nil时 返回所有字段
-    //param 3 ：每页20条数据
-    //param 4 ：查询第一页
-    row := db.QuickPageFind(User{Name:"lihua"},[]string{"name","age"},20,1)
+    //param 2 ：每页20条数据
+    //param 3 ：查询第一页
+    //返回所有字段
+    row := db.QuickPageFind(User{Name:"lihua"},20,1)
+    //查询列为 name,age
+    row := db.QuickPageFind(User{Name:"lihua"},20,1,"name","age")
 
     //快速插入
     //param ：指定插入name = lihua 的数据

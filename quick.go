@@ -14,11 +14,11 @@ func (db *DBPool) QuickInsert(p interface{}) (sql.Result, error) {
 	return nil, NO_FIELDS
 }
 
-func (db *DBPool) QuickFind(selector interface{}, columns []string) ([]map[string]string, error) {
-	return db.QuickPageFind(selector, columns, 0, 0)
+func (db *DBPool) QuickFind(selector interface{}, columns ...string) ([]map[string]string, error) {
+	return db.QuickPageFind(selector, 0, 0, columns)
 }
 
-func (db *DBPool) QuickPageFind(selector interface{}, columns []string, pageSize, pageNo int) ([]map[string]string, error) {
+func (db *DBPool) QuickPageFind(selector interface{}, pageSize, pageNo int, columns []string) ([]map[string]string, error) {
 	if selector == nil {
 		return nil, NO_TABLE
 	}
