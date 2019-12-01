@@ -10,6 +10,7 @@ const (
 	//base tags
 	TAG_NAME_COLUMN = "sql"
 	TAG_NAME_PK     = "pk"
+	TAG_NAME_UNIQUE     = "unique"
 
 	//function tags
 	TAG_NAME_ORDER       = "order"
@@ -32,6 +33,7 @@ type (
 		tname  string
 		pk     string
 		fields []*mysqlFileTag
+		unique []string
 	}
 	mysqlFileTag struct {
 		name  string
@@ -48,6 +50,7 @@ func structConvMysqlTag(p interface{}) *mysqlTag {
 		tname:  snakeString(t.Name()),
 		pk:     "",
 		fields: make([]*mysqlFileTag, 0),
+		unique: make([]string,0),
 	}
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
@@ -61,6 +64,9 @@ func structConvMysqlTag(p interface{}) *mysqlTag {
 				mt.pk = name
 			}
 		}
+		if len(f.Tag.Get(TAG_NAME_UNIQUE)) > 0 {
+			mt.unique = append(mt.unique,name)
+		}
 		value := v.Field(i).Interface()
 		tags := make(map[string]string)
 		for _, v := range funcTags {
@@ -68,6 +74,7 @@ func structConvMysqlTag(p interface{}) *mysqlTag {
 				tags[v] = t
 			}
 		}
+
 		mft := mysqlFileTag{
 			name:  name,
 			value: value,
@@ -225,6 +232,12 @@ func (mt *mysqlTag) sqlCreateTable() string {
 	}
 	if len(mt.pk) > 0 {
 		allColumnSql = append(allColumnSql, fmt.Sprintf(sql_pk, mt.pk))
+	}
+
+	if len(mt.unique) > 0 {
+		for _,v := range mt.unique {
+			allColumnSql = append(allColumnSql,fmt.Sprintf(sql_unique,v,v))
+		}
 	}
 	return fmt.Sprintf(sql_create_table, mt.tname, strings.Join(allColumnSql, ","))
 }

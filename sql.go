@@ -17,4 +17,5 @@ var (
 	sql_check_column = "show columns from %s"
 	sql_add_column   = "ALTER TABLE %s ADD %s"
 	sql_pk           = "PRIMARY KEY (`%s`)"
+	sql_unique           = "UNIQUE KEY `%s_unique` (`%s`)"
 )
