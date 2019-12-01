@@ -77,5 +77,6 @@ func (db *DBPool) QuickCheckTableStruct(p interface{}) {
 			db.debug("create table error", err.Error())
 			return
 		}
+		db.QuickInsert(p)
 	}
 }
